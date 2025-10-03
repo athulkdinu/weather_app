@@ -6,18 +6,18 @@ const Animation = ({ weatherCondition }) => {
     const conditionLower = condition.toLowerCase();
     
     if (conditionLower.includes('cloud') || conditionLower.includes('overcast')) {
-      return '/src/assets/coluds.mp4';
+      return '/animations/clouds.mp4';
     } else if (conditionLower.includes('rain') || conditionLower.includes('drizzle')) {
-      return '/src/assets/rainy.mp4';
+      return '/animations/rainy.mp4';
     } else if (conditionLower.includes('snow') || conditionLower.includes('blizzard')) {
-      return '/src/assets/snow.mp4';
+      return '/animations/snow.mp4';
     } else if (conditionLower.includes('thunder') || conditionLower.includes('storm')) {
-      return '/src/assets/thunder.mp4';
+      return '/animations/thunder.mp4';
     } else if (conditionLower.includes('clear') || conditionLower.includes('sunny')) {
-      return '/src/assets/sunny.mp4';
+      return '/animations/sunny.mp4';
     } else {
       // Default to clouds for unknown conditions
-      return '/src/assets/coluds.mp4';
+      return '/animations/clouds.mp4';
     }
   };
 
@@ -27,6 +27,11 @@ const Animation = ({ weatherCondition }) => {
       loop
       muted
       playsInline
+      onError={(e) => {
+        console.log('Video failed to load:', e.target.src);
+        // Fallback to a default video or hide the element
+        e.target.style.display = 'none';
+      }}
       style={{
         width: '120px',
         height: '120px',
