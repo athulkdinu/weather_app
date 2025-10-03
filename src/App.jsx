@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import LiquidEther from './components/LiquidEther'; // Component
 import './components/LiquidEther.css';             // CSS
+import Animation from './Animation';                // Animation component
 
 const API_KEY = "03e1a5c30751fb347bda9957c0e6f903";
 const BASE_URL = "https://api.openweathermap.org/data/2.5";
@@ -41,16 +42,49 @@ function App() {
   };
 
   const getWeatherGradient = () => {
-    if (!weather) return "rgba(255,255,255,0.1)";
+    if (!weather) return "linear-gradient(135deg, #667eea 0%, #764ba2 100%)";
     const main = weather.weather[0].main.toLowerCase();
     switch (main) {
-      case "clouds": return "linear-gradient(135deg, #757f9a, #d7dde8)";
+      case "clouds": return "linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)";
       case "rain":
-      case "drizzle": return "linear-gradient(135deg, #667db6, #0082c8, #0082c8, #667db6)";
-      case "thunderstorm": return "linear-gradient(135deg, #0f2027, #203a43, #2c5364)";
-      case "snow": return "linear-gradient(135deg, #e6e9f0, #eef1f5)";
-      case "clear": return "linear-gradient(135deg, #fceabb, #f8b500)";
-      default: return "rgba(255,255,255,0.1)";
+      case "drizzle": return "linear-gradient(135deg, #667eea 0%, #764ba2 50%, #667eea 100%)";
+      case "thunderstorm": return "linear-gradient(135deg, #2c3e50 0%, #34495e 50%, #2c3e50 100%)";
+      case "snow": return "linear-gradient(135deg, #f093fb 0%, #f5576c 50%, #4facfe 100%)";
+      case "clear": return "linear-gradient(135deg, #ffecd2 0%, #fcb69f 50%, #ff8a80 100%)";
+      case "mist":
+      case "fog": return "linear-gradient(135deg, #a8edea 0%, #fed6e3 100%)";
+      case "haze": return "linear-gradient(135deg, #ff9a9e 0%, #fecfef 50%, #fecfef 100%)";
+      default: return "linear-gradient(135deg, #667eea 0%, #764ba2 100%)";
+    }
+  };
+
+  const getWeatherTextColor = () => {
+    if (!weather) return "#fff";
+    const main = weather.weather[0].main.toLowerCase();
+    switch (main) {
+      case "clear": return "#2c3e50";
+      case "snow": return "#2c3e50";
+      case "mist":
+      case "fog": return "#2c3e50";
+      case "haze": return "#2c3e50";
+      default: return "#fff";
+    }
+  };
+
+  const getWeatherShadow = () => {
+    if (!weather) return "0 20px 60px rgba(102, 126, 234, 0.4)";
+    const main = weather.weather[0].main.toLowerCase();
+    switch (main) {
+      case "clouds": return "0 20px 60px rgba(79, 172, 254, 0.4)";
+      case "rain":
+      case "drizzle": return "0 20px 60px rgba(102, 126, 234, 0.4)";
+      case "thunderstorm": return "0 20px 60px rgba(44, 62, 80, 0.6)";
+      case "snow": return "0 20px 60px rgba(240, 147, 251, 0.4)";
+      case "clear": return "0 20px 60px rgba(255, 138, 128, 0.4)";
+      case "mist":
+      case "fog": return "0 20px 60px rgba(168, 237, 234, 0.4)";
+      case "haze": return "0 20px 60px rgba(255, 154, 158, 0.4)";
+      default: return "0 20px 60px rgba(102, 126, 234, 0.4)";
     }
   };
 
@@ -85,12 +119,13 @@ function App() {
           borderRadius: "25px",
           width: "90%",
           maxWidth: "400px",
-          boxShadow: "0 15px 40px rgba(0, 0, 0, 0.5)",
-          backdropFilter: "blur(15px)",
-          color: "#fff",
+          boxShadow: getWeatherShadow(),
+          backdropFilter: "blur(20px)",
+          color: getWeatherTextColor(),
           textAlign: "center",
-          border: "1px solid rgba(255,255,255,0.4)",
-          transition: "all 0.5s ease",
+          border: "2px solid rgba(255,255,255,0.3)",
+          transition: "all 0.6s cubic-bezier(0.4, 0, 0.2, 1)",
+          transform: "translate(-50%, -50%) scale(1)",
         }}
       >
         <h1 style={{ marginBottom: "20px", fontSize: "2rem", letterSpacing: "1px" }}>Weather App</h1>
@@ -103,13 +138,15 @@ function App() {
             placeholder="Enter city"
             style={{
               flex: 1,
-              padding: "12px",
+              padding: "12px 16px",
               borderRadius: "10px 0 0 10px",
               border: "none",
               outline: "none",
-              background: "rgba(0,0,0,0.25)",
-              color: "#fff",
+              background: "rgba(255,255,255,0.2)",
+              color: getWeatherTextColor(),
               fontWeight: "500",
+              backdropFilter: "blur(10px)",
+              border: "1px solid rgba(255,255,255,0.2)",
             }}
           />
           <button
@@ -118,11 +155,12 @@ function App() {
               padding: "12px 20px",
               borderRadius: "0 10px 10px 0",
               border: "none",
-              background: "#ff7eb3",
+              background: "linear-gradient(135deg, #ff7eb3, #ff6b9d)",
               color: "#fff",
               fontWeight: "bold",
               cursor: "pointer",
-              transition: "0.3s",
+              transition: "all 0.3s ease",
+              boxShadow: "0 4px 15px rgba(255, 126, 179, 0.4)",
             }}
           >
             Search
@@ -135,24 +173,21 @@ function App() {
         {weather && !loading && (
           <div
             style={{
-              marginTop: "10px",
-              padding: "20px",
-              borderRadius: "25px",
-              background: "rgba(0,0,0,0.35)", 
-              border: "1px solid rgba(255,255,255,0.5)",
-              backdropFilter: "blur(12px)",
-              transition: "all 0.3s ease",
+              marginTop: "15px",
+              padding: "25px",
+              borderRadius: "20px",
+              background: "rgba(255,255,255,0.15)", 
+              border: "1px solid rgba(255,255,255,0.3)",
+              backdropFilter: "blur(15px)",
+              transition: "all 0.4s ease",
+              boxShadow: "0 8px 32px rgba(0,0,0,0.1)",
             }}
           >
             <h2 style={{ fontSize: "1.5rem", marginBottom: "10px" }}>
               {weather.name}, {weather.sys.country}
             </h2>
 
-            <img
-              src={`https://openweathermap.org/img/wn/${weather.weather[0].icon}@2x.png`}
-              alt={weather.weather[0].description}
-              style={{ marginBottom: "10px" }}
-            />
+            <Animation weatherCondition={weather.weather[0].main} />
 
             <p style={{ fontSize: "2.5rem", margin: "10px 0", fontWeight: "bold" }}>
               {Math.round(weather.main.temp)}°C
